@@ -53,7 +53,7 @@ def generar_plantilla_csv():
         'Hojas ': [20, 15],
         'Humedad ': [65, 60],
         'Dias desde la Siembra ': [60, 50],
-        'Daño en Raices ': ['FALSO', 'VERDADERO']
+        'Raiz en Mal Estado ': ['FALSO', 'VERDADERO']
     })
     return df_plantilla.to_csv(index=False).encode('utf-8')
 
@@ -86,7 +86,7 @@ if archivo_cargado is not None:
             'Planta N°': 'id',
             'Longitud (cm)': 'Longitud',
             'Dias desde la Siembra': 'Dias',
-            'Daño en Raices': 'Dano'
+            'Raiz en Mal Estado': 'Dano'
         })
             
         # Traductor para que Python entienda el VERDADERO/FALSO de Excel
