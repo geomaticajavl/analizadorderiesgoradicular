@@ -103,7 +103,7 @@ st.sidebar.divider()
 st.sidebar.header("🎛️ Simulación de Entorno")
 st.sidebar.write("Ajusta estas variables para ver cómo se comporta el mapa:")
 
-humedad_simulada = st.sidebar.slider("Humedad actual del lote (%)", 10, 100, 65)
+humedad_simulada = st.sidebar.slider("Humedad actual del lote (%)", 10.0, 100.0, 65.0, step=0.1)
 dias_simulados = st.sidebar.slider("Días transcurridos desde siembra", 5, 120, 60)
 
 # --- 3. DISEÑO DE LA INTERFAZ PRINCIPAL ---
@@ -132,7 +132,6 @@ with col_tabla:
 with col_grafica:
     st.subheader("🖼️ Visualización Dinámica del Modelo")
     
-    # AQUÍ ESTÁ EL ERROR CORREGIDO ('Dano' en lugar de 'Daño en Raices')
     if len(datos_vivos['Dano'].unique()) < 2:
         st.warning("El modelo requiere al menos una planta sana y una con daño.")
     else:
@@ -172,7 +171,6 @@ with col_grafica:
         for texto in etiquetas:
             texto.set_weight('bold')
             
-        # Puntos usando tus nuevas columnas
         sanas = datos_vivos[datos_vivos['Dano'] == False]
         enfermas = datos_vivos[datos_vivos['Dano'] == True]
         
@@ -198,11 +196,11 @@ st.divider()
 st.subheader("🔮 Diagnóstico Rápido Individual")
 c1, c2, c3, c4, c5 = st.columns(5)
 with c1:
-    v_lon = st.number_input("Longitud Planta (cm)", 0, 150, 45)
+    v_lon = st.number_input("Longitud Planta (cm)", 0.0, 150.0, 45.0, step=0.1)
 with c2:
     v_hoj = st.number_input("Número de Hojas", 0, 80, 18)
 with c3:
-    v_hum = st.number_input("Humedad Suelo (%)", 10, 100, 60)
+    v_hum = st.number_input("Humedad Suelo (%)", 10.0, 100.0, 60.0, step=0.1)
 with c4:
     v_dia = st.number_input("Días de Cultivo", 1, 150, 45)
 with c5:
