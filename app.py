@@ -121,7 +121,7 @@ with col_tabla:
 with col_grafica:
     st.subheader("🖼️ Visualización Dinámica del Modelo")
     
-    if len(datos_vivos['Dano'].unique()) < 2:
+    if len(datos_vivos['Daño en Raices'].unique()) < 2:
         st.warning("El modelo requiere al menos una planta sana y una con daño.")
     else:
         # Usamos tus nombres de columnas simplificados
