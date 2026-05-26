@@ -34,9 +34,9 @@ def generar_datos_completos():
     
     return pd.DataFrame({
         'id': range(1, n + 1),
-        'Longitud': np.clip(longitud, 0, 150).astype(int),
+        'Longitud': np.clip(longitud, 0, 150).round(1),
         'Hojas': np.clip(hojas, 0, 80).astype(int),
-        'Humedad': np.clip(humedad, 10, 100).astype(int),
+        'Humedad': np.clip(humedad, 10, 100).round(1),
         'Dias': np.clip(dias, 5, 120).astype(int),
         'Dano': dano # True = Con daño, False = Sana
     })
