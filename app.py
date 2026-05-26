@@ -6,7 +6,6 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.pipeline import Pipeline
 
-# --- CONFIGURACIÓN ESTÉTICA ---
 st.set_page_config(page_title="Analizador Multivariable Raíz", layout="wide")
 
 st.markdown("""
@@ -19,7 +18,7 @@ st.markdown("""
 st.title("🌱 Sistema de Predicción Fitopatológica Multivariable")
 st.write("Esta versión analiza Longitud, Hojas, Humedad del suelo y Días desde la siembra para generar mapas predictivos dinámicos.")
 
-# --- 1. GENERADOR DE DATOS Y PLANTILLA ---
+# Plantilla y Datos
 def generar_datos_completos():
     np.random.seed(42)
     n = 350
@@ -38,13 +37,13 @@ def generar_datos_completos():
         'Hojas': np.clip(hojas, 0, 80).astype(int),
         'Humedad': np.clip(humedad, 10, 100).round(1),
         'Dias': np.clip(dias, 5, 120).astype(int),
-        'Dano': dano # True = Con daño, False = Sana
+        'Dano': dano 
     })
 
 if 'df_multi' not in st.session_state:
     st.session_state.df_multi = generar_datos_completos()
 
-# Tu plantilla exacta (Intacta)
+# Plantilla Csv
 @st.cache_data
 def generar_plantilla_csv():
     df_plantilla = pd.DataFrame({
@@ -57,7 +56,7 @@ def generar_plantilla_csv():
     })
     return df_plantilla.to_csv(index=False).encode('utf-8')
 
-# --- 2. PANEL LATERAL (CARGA, DESCARGA Y SIMULACIÓN) ---
+# SideBar
 st.sidebar.header("📁 Gestión de Archivos")
 
 st.sidebar.write("1. Descarga la plantilla y llénala con tus datos:")
@@ -78,10 +77,9 @@ if archivo_cargado is not None:
         else:
             df_nuevo = pd.read_excel(archivo_cargado)
             
-        # Limpiamos los nombres de las columnas quitando espacios en blanco extra
         df_nuevo.columns = df_nuevo.columns.str.strip()
         
-        # TRADUCTOR: Convierte los nombres de tu Excel a los nombres que usa el código
+        # TRADUCTOR DEL CSV A CODIGO
         df_nuevo = df_nuevo.rename(columns={
             'Planta N°': 'id',
             'Longitud (cm)': 'Longitud',
@@ -89,7 +87,7 @@ if archivo_cargado is not None:
             'Raiz en Mal Estado': 'Dano'
         })
             
-        # Traductor para que Python entienda el VERDADERO/FALSO de Excel
+        # Traductor para que Python entienda el VERDADERO/FALSO de el CSV
         if 'Dano' in df_nuevo.columns:
             df_nuevo['Dano'] = df_nuevo['Dano'].replace({'VERDADERO': True, 'FALSO': False, 'Verdadero': True, 'Falso': False, 'Si': True, 'No': False})
             df_nuevo['Dano'] = df_nuevo['Dano'].astype(bool)
@@ -106,7 +104,7 @@ st.sidebar.write("Ajusta estas variables para ver cómo se comporta el mapa:")
 humedad_simulada = st.sidebar.slider("Humedad actual del lote (%)", 10.0, 100.0, 65.0, step=0.1)
 dias_simulados = st.sidebar.slider("Días transcurridos desde siembra", 5, 120, 60)
 
-# --- 3. DISEÑO DE LA INTERFAZ PRINCIPAL ---
+# Interfaz
 col_tabla, col_grafica = st.columns([4, 5])
 
 with col_tabla:
@@ -135,7 +133,7 @@ with col_grafica:
     if len(datos_vivos['Dano'].unique()) < 2:
         st.warning("El modelo requiere al menos una planta sana y una con daño.")
     else:
-        # Usamos tus nombres de columnas simplificados
+        # Nombres Columnas
         X = datos_vivos[['Longitud', 'Hojas', 'Humedad', 'Dias']]
         y = datos_vivos['Dano'].astype(int)
         
@@ -145,7 +143,7 @@ with col_grafica:
         ])
         modelo_completo.fit(X, y)
         
-        # --- GENERACIÓN DE LA GRÁFICA ---
+        # Graphic Generation
         fig, ax = plt.subplots(figsize=(10, 9))
         
         x_space = np.linspace(0, 150, 150)
@@ -191,7 +189,7 @@ with col_grafica:
         
         st.pyplot(fig)
 
-# --- 4. CALCULADORA PREDICTIVA EXPRESO ---
+# Calculadora Individual
 st.divider()
 st.subheader("🔮 Diagnóstico Rápido Individual")
 c1, c2, c3, c4, c5 = st.columns(5)
