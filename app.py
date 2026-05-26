@@ -44,7 +44,7 @@ def generar_datos_completos():
 if 'df_multi' not in st.session_state:
     st.session_state.df_multi = generar_datos_completos()
 
-# Tu plantilla exacta
+# Tu plantilla exacta (Intacta)
 @st.cache_data
 def generar_plantilla_csv():
     df_plantilla = pd.DataFrame({
@@ -78,9 +78,20 @@ if archivo_cargado is not None:
         else:
             df_nuevo = pd.read_excel(archivo_cargado)
             
+        # Limpiamos los nombres de las columnas quitando espacios en blanco extra
+        df_nuevo.columns = df_nuevo.columns.str.strip()
+        
+        # TRADUCTOR: Convierte los nombres de tu Excel a los nombres que usa el código
+        df_nuevo = df_nuevo.rename(columns={
+            'Planta N°': 'id',
+            'Longitud (cm)': 'Longitud',
+            'Dias desde la Siembra': 'Dias',
+            'Daño en Raices': 'Dano'
+        })
+            
         # Traductor para que Python entienda el VERDADERO/FALSO de Excel
         if 'Dano' in df_nuevo.columns:
-            df_nuevo['Dano'] = df_nuevo['Dano'].replace({'VERDADERO': True, 'FALSO': False, 'Verdadero': True, 'Falso': False})
+            df_nuevo['Dano'] = df_nuevo['Dano'].replace({'VERDADERO': True, 'FALSO': False, 'Verdadero': True, 'Falso': False, 'Si': True, 'No': False})
             df_nuevo['Dano'] = df_nuevo['Dano'].astype(bool)
             
         st.session_state.df_multi = df_nuevo
@@ -103,7 +114,7 @@ with col_tabla:
     
     # Configuración adaptada a tus nuevas columnas
     config_columnas = {
-        "id": st.column_config.NumberColumn("ID", disabled=True), # El ID no se debería editar
+        "id": st.column_config.NumberColumn("ID", disabled=True), 
         "Dano": st.column_config.CheckboxColumn(
             "Daño Radicular",
             help="Marca la casilla si la planta está enferma.",
@@ -121,7 +132,8 @@ with col_tabla:
 with col_grafica:
     st.subheader("🖼️ Visualización Dinámica del Modelo")
     
-    if len(datos_vivos['Daño en Raices'].unique()) < 2:
+    # AQUÍ ESTÁ EL ERROR CORREGIDO ('Dano' en lugar de 'Daño en Raices')
+    if len(datos_vivos['Dano'].unique()) < 2:
         st.warning("El modelo requiere al menos una planta sana y una con daño.")
     else:
         # Usamos tus nombres de columnas simplificados
